@@ -7,7 +7,7 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.repository.JobRepository;
 
-public class BillingJob implements Job {
+/*public class BillingJob implements Job {
     
     private JobRepository jobRepository;
     
@@ -28,7 +28,7 @@ public class BillingJob implements Job {
         execution.setStatus(BatchStatus.COMPLETED);
         execution.setExitStatus(ExitStatus.COMPLETED);
         this.jobRepository.update(execution);
-    }
+    }*/
 
     // Testing the exception handling
 /*    @Override
@@ -43,4 +43,4 @@ public class BillingJob implements Job {
             this.jobRepository.update(execution);
         }
     }*/
-}
+//}
