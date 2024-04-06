@@ -2,6 +2,7 @@ package com.bilingjob.Processors;
 
 import com.bilingjob.Records.BillingData;
 import com.bilingjob.Records.ReportingData;
+import com.bilingjob.services.PricingService;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -19,9 +20,18 @@ public class BillingDataProcessor implements ItemProcessor<BillingData, Reportin
     @Value("${spring.cellular.spending.threshold:150}")
     private float spendingThreshold;
     
+    private final PricingService pricingService;
+    
+    public BillingDataProcessor(PricingService pricingService) {
+        this.pricingService = pricingService;
+    }
+    
     @Override
     public ReportingData process(BillingData item) {
-        double billingTotal = item.dataUsage() * dataPricing + item.callDuration() * callPricing + item.smsCount() * smsPricing;
+        double billingTotal =
+            item.dataUsage() * pricingService.getDataPricing() +
+                item.callDuration() * pricingService.getCallPricing() +
+                item.smsCount() * pricingService.getSmsPricing();
         if (billingTotal < spendingThreshold) {
             return null;
         }

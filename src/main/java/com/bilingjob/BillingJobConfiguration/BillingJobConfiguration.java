@@ -5,7 +5,9 @@ import com.bilingjob.Records.BillingData;
 import com.bilingjob.Records.ReportingData;
 import com.bilingjob.Tasklets.FilePreparationTasklet;
 //import com.bilingjob.jobs.BillingJob;
+import com.bilingjob.exceptions.PricingException;
 import com.bilingjob.jobs.BillingDataSkipListener;
+import com.bilingjob.services.PricingService;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -78,6 +80,9 @@ public class BillingJobConfiguration {
             .reader(billingDataTableReader)
             .processor(billingDataProcessor)
             .writer(billingDataFileWriter)
+            .faultTolerant()
+            .retry(PricingException.class)
+            .retryLimit(100)
             .build();
     }
     
@@ -119,11 +124,6 @@ public class BillingJobConfiguration {
     }
     
     @Bean
-    public BillingDataProcessor billingDataProcessor() {
-        return new BillingDataProcessor();
-    }
-    
-    @Bean
     @StepScope
     public FlatFileItemWriter<ReportingData> billingDataFileWriter(
         @Value("#{jobParameters['output.file']}") String outputFile) {
@@ -140,6 +140,10 @@ public class BillingJobConfiguration {
     public BillingDataSkipListener skipListener(@Value("#{jobParameters['skip.file']}") String skippedFile) {
         return new BillingDataSkipListener(skippedFile);
     }
-
+    
+    @Bean
+    public BillingDataProcessor billingDataProcessor(PricingService pricingService) {
+        return new BillingDataProcessor(pricingService);
+    }
 
 }
