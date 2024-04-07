@@ -32,10 +32,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.support.JdbcTransactionManager;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.sql.DataSource;
 
 @Configuration
+@EnableScheduling
 public class BillingJobConfiguration {
     @Bean
     public Job job(JobRepository jobRepository, Step step1, Step step2, Step step3) {
